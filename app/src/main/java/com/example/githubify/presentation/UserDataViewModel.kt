@@ -25,6 +25,9 @@ class UserDataViewModel(
     private val _user = MutableStateFlow<UserData?>(null)
     val user: StateFlow<UserData?> = _user.asStateFlow()
 
+    private val _error = MutableStateFlow<String>("")
+    val error: StateFlow<String> = _error.asStateFlow()
+
     private val _showErrorToastChannel = Channel<Boolean>()
     val showErrorToastChannel = _showErrorToastChannel.receiveAsFlow()
 
@@ -33,15 +36,24 @@ class UserDataViewModel(
             userRepository.getUser(username).collectLatest { result ->
                 when (result) {
                     is Result.Error -> {
+                        _user.value = null // Clear the current user
+                        _error.value = "User not found." // Set error message
                         _showErrorToastChannel.send(true)
                     }
                     is Result.Success -> {
                         result.data?.let { user ->
                             _user.update { user }
+                            _error.value = "" // Clear any previous error message
+                        } ?: run {
+                            _user.value = null
+                            _error.value = "User not found."
                         }
                     }
                 }
             }
         }
+    }
+    fun clearUserData() {
+        _user.value = null
     }
 }
