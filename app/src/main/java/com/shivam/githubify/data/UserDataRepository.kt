@@ -1,6 +1,6 @@
-package com.example.githubify.data
+package com.shivam.githubify.data
 
-import com.example.githubify.data.model.UserData
+import com.shivam.githubify.data.model.UserData
 import kotlinx.coroutines.flow.Flow
 
 /**

@@ -1,4 +1,4 @@
-package com.example.githubify.data.model
+package com.shivam.githubify.data.model
 
 /**
  * @author 007-Shivam (Shivam Bhosle)

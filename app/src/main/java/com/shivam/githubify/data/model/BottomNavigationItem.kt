@@ -1,4 +1,4 @@
-package com.example.githubify.data.model
+package com.shivam.githubify.data.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

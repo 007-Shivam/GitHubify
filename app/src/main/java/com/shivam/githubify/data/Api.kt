@@ -1,6 +1,6 @@
-package com.example.githubify.data
+package com.shivam.githubify.data
 
-import com.example.githubify.data.model.UserData
+import com.shivam.githubify.data.model.UserData
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -9,7 +9,6 @@ import retrofit2.http.Path
  */
 
 interface Api {
-
     @GET("users/{username}")
     suspend fun getUser(
         @Path("username") username: String
@@ -18,5 +17,4 @@ interface Api {
     companion object {
         const val BASE_URL = "https://api.github.com/"
     }
-
 }

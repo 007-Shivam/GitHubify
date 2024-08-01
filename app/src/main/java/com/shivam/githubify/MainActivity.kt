@@ -1,4 +1,4 @@
-package com.example.githubify
+package com.shivam.githubify
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -29,14 +29,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.githubify.activity.Home
-import com.example.githubify.activity.Profile
-import com.example.githubify.activity.UserDetails
-import com.example.githubify.data.RetrofitInstance
-import com.example.githubify.data.UserDataRepositoryImpl
-import com.example.githubify.data.model.BottomNavigationItem
-import com.example.githubify.presentation.UserDataViewModel
-import com.example.githubify.ui.theme.GitHubifyTheme
+import com.shivam.githubify.activity.Home
+import com.shivam.githubify.activity.Profile
+import com.shivam.githubify.activity.UserDetails
+import com.shivam.githubify.data.RetrofitInstance
+import com.shivam.githubify.data.UserDataRepositoryImpl
+import com.shivam.githubify.data.model.BottomNavigationItem
+import com.shivam.githubify.presentation.UserDataViewModel
+import com.shivam.githubify.ui.theme.GitHubifyTheme
 
 /**
  * @author 007-Shivam (Shivam Bhosle)

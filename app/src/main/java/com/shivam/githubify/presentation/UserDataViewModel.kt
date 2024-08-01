@@ -1,10 +1,10 @@
-package com.example.githubify.presentation
+package com.shivam.githubify.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.githubify.data.UserDataRepository
-import com.example.githubify.data.model.UserData
-import com.example.githubify.data.Result
+import com.shivam.githubify.data.UserDataRepository
+import com.shivam.githubify.data.model.UserData
+import com.shivam.githubify.data.Result
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,15 +25,20 @@ class UserDataViewModel(
     private val _user = MutableStateFlow<UserData?>(null)
     val user: StateFlow<UserData?> = _user.asStateFlow()
 
-    private val _error = MutableStateFlow<String>("")
+    private val _error = MutableStateFlow("")
     val error: StateFlow<String> = _error.asStateFlow()
+
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
     private val _showErrorToastChannel = Channel<Boolean>()
     val showErrorToastChannel = _showErrorToastChannel.receiveAsFlow()
 
     fun fetchUser(username: String) {
         viewModelScope.launch {
+            _loading.value = true
             userRepository.getUser(username).collectLatest { result ->
+                _loading.value = false
                 when (result) {
                     is Result.Error -> {
                         _user.value = null // Clear the current user
@@ -53,6 +58,7 @@ class UserDataViewModel(
             }
         }
     }
+
     fun clearUserData() {
         _user.value = null
     }

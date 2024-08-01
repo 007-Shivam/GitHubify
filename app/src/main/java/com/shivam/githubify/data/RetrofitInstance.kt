@@ -1,4 +1,4 @@
-package com.example.githubify.data
+package com.shivam.githubify.data
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

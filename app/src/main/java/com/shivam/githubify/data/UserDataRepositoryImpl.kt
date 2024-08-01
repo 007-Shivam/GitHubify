@@ -1,7 +1,7 @@
-package com.example.githubify.data
+package com.shivam.githubify.data
 
 import coil.network.HttpException
-import com.example.githubify.data.model.UserData
+import com.shivam.githubify.data.model.UserData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
