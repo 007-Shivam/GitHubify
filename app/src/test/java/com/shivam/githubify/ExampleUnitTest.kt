@@ -1,4 +1,4 @@
-package com.example.githubify
+package com.shivam.githubify
 
 import org.junit.Test
 

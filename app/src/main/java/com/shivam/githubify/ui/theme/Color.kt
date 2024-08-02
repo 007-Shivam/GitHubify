@@ -1,4 +1,4 @@
-package com.example.githubify.ui.theme
+package com.shivam.githubify.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

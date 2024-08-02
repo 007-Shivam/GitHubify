@@ -1,4 +1,4 @@
-package com.example.githubify
+package com.shivam.githubify
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.githubify.ui.theme.GitHubifyTheme
+import com.shivam.githubify.ui.theme.GitHubifyTheme
 import kotlinx.coroutines.delay
 
 /**

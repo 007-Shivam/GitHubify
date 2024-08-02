@@ -1,10 +1,11 @@
-package com.example.githubify.presentation
+package com.shivam.githubify.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.githubify.data.UserDataRepository
-import com.example.githubify.data.model.UserData
-import com.example.githubify.data.Result
+import com.shivam.githubify.data.UserDataRepository
+import com.shivam.githubify.data.model.UserData
+import com.shivam.githubify.data.Result
+import com.shivam.githubify.data.model.RepoData
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,25 +26,33 @@ class UserDataViewModel(
     private val _user = MutableStateFlow<UserData?>(null)
     val user: StateFlow<UserData?> = _user.asStateFlow()
 
-    private val _error = MutableStateFlow<String>("")
+    private val _repos = MutableStateFlow<List<RepoData>>(emptyList())
+    val repos: StateFlow<List<RepoData>> = _repos.asStateFlow()
+
+    private val _error = MutableStateFlow("")
     val error: StateFlow<String> = _error.asStateFlow()
+
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
     private val _showErrorToastChannel = Channel<Boolean>()
     val showErrorToastChannel = _showErrorToastChannel.receiveAsFlow()
 
     fun fetchUser(username: String) {
         viewModelScope.launch {
+            _loading.value = true
             userRepository.getUser(username).collectLatest { result ->
+                _loading.value = false
                 when (result) {
                     is Result.Error -> {
-                        _user.value = null // Clear the current user
-                        _error.value = "User not found." // Set error message
+                        _user.value = null
+                        _error.value = "User not found."
                         _showErrorToastChannel.send(true)
                     }
                     is Result.Success -> {
                         result.data?.let { user ->
-                            _user.update { user }
-                            _error.value = "" // Clear any previous error message
+                            _user.value = user
+                            _error.value = ""
                         } ?: run {
                             _user.value = null
                             _error.value = "User not found."
@@ -53,7 +62,27 @@ class UserDataViewModel(
             }
         }
     }
+
+    fun fetchRepos(username: String) {
+        viewModelScope.launch {
+            userRepository.getRepos(username).collectLatest { result ->
+                when (result) {
+                    is Result.Error -> {
+                        _repos.value = emptyList()
+                        _error.value = "Error loading repos."
+                        _showErrorToastChannel.send(true)
+                    }
+                    is Result.Success -> {
+                        _repos.value = result.data ?: emptyList()
+                    }
+                }
+            }
+        }
+    }
+
     fun clearUserData() {
         _user.value = null
+        _repos.value = emptyList()
     }
 }
+

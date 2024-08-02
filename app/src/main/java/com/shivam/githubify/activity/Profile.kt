@@ -1,4 +1,4 @@
-package com.example.githubify.activity
+package com.shivam.githubify.activity
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

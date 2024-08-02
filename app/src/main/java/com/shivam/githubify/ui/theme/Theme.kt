@@ -1,4 +1,4 @@
-package com.example.githubify.ui.theme
+package com.shivam.githubify.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

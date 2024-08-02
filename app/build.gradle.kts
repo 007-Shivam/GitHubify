@@ -1,14 +1,16 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.example.githubify"
+    namespace = "com.shivam.githubify"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.githubify"
+        applicationId = "com.shivam.githubify"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -18,6 +20,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = gradleLocalProperties(rootDir)
+        buildConfigField("String", "PERSONAL_ACCESS_TOKEN", "\"${properties.getProperty("PERSONAL_ACCESS_TOKEN")}\"")
     }
 
     buildTypes {
@@ -38,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -84,5 +90,4 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     implementation("io.coil-kt:coil-compose:2.7.0")
-
 }

@@ -1,4 +1,4 @@
-package com.example.githubify.activity
+package com.shivam.githubify.activity
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -24,15 +26,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.githubify.R
-import com.example.githubify.presentation.UserDataViewModel
+import com.shivam.githubify.LoadingAnimation
+import com.shivam.githubify.R
+import com.shivam.githubify.presentation.UserDataViewModel
 
 /**
  * @author 007-Shivam (Shivam Bhosle)
@@ -42,21 +48,32 @@ import com.example.githubify.presentation.UserDataViewModel
 fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
     val user by viewModel.user.collectAsState()
     val error by viewModel.error.collectAsState()
+    val isLoading by viewModel.loading.collectAsState()
+    val repos by viewModel.repos.collectAsState()
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (user == null) {
-            Searchbar(viewModel, error) { username ->
-                viewModel.fetchUser(username)
-                if (viewModel.user.value != null) {
-                    navController.navigate("UserDetails")
-                }
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 60.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                LoadingAnimation()
             }
         } else {
-            UserDetails(user, navController, viewModel)
+            if (user == null) {
+                Searchbar(viewModel, error) { username ->
+                    viewModel.fetchUser(username)
+                }
+            } else {
+                UserDetails(user, repos, navController, viewModel)
+            }
         }
     }
 }
@@ -64,8 +81,9 @@ fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
 @Composable
 fun Searchbar(viewModel: UserDataViewModel, error: String, onSearch: (String) -> Unit) {
     var text by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    Spacer(modifier = Modifier.height(60.dp))
+    Spacer(modifier = Modifier.height(80.dp))
 
     Text(
         text = "Enter the\nGithub\nUsername",
@@ -84,9 +102,19 @@ fun Searchbar(viewModel: UserDataViewModel, error: String, onSearch: (String) ->
                 contentDescription = "Search Icon",
             )
         },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+            }
+        ),
         value = text,
         label = { Text("Search") },
         onValueChange = { text = it },
+        maxLines = 1
     )
 
     Spacer(modifier = Modifier.height(15.dp))
