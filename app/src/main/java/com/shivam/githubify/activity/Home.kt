@@ -49,6 +49,7 @@ fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
     val user by viewModel.user.collectAsState()
     val error by viewModel.error.collectAsState()
     val isLoading by viewModel.loading.collectAsState()
+    val repos by viewModel.repos.collectAsState()
 
 
     Column(
@@ -71,7 +72,7 @@ fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
                     viewModel.fetchUser(username)
                 }
             } else {
-                UserDetails(user, navController, viewModel)
+                UserDetails(user, repos, navController, viewModel)
             }
         }
     }

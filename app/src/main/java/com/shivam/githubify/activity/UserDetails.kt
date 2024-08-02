@@ -4,18 +4,23 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.shivam.githubify.R
+import com.shivam.githubify.data.model.RepoData
 import com.shivam.githubify.data.model.UserData
 import com.shivam.githubify.presentation.UserDataViewModel
 
@@ -43,9 +49,16 @@ import com.shivam.githubify.presentation.UserDataViewModel
  */
 
 @Composable
-fun UserDetails(user: UserData?, navController: NavHostController, viewModel: UserDataViewModel) {
+fun UserDetails(
+    user: UserData?,
+    repos: List<RepoData>,
+    navController: NavHostController,
+    viewModel: UserDataViewModel)
+{
 
     if (user != null) {
+        viewModel.fetchRepos(user.login)
+
         BackHandler {
             viewModel.clearUserData()
             navController.navigateUp()
@@ -211,7 +224,65 @@ fun UserDetails(user: UserData?, navController: NavHostController, viewModel: Us
                 }
             }
 
-            
+            Text(
+                text = "Repositories",
+                fontFamily = FontFamily(Font(R.font.zain_bold)),
+                fontSize = 24.sp
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            ) {
+                LazyColumn {
+                    items(repos) { repo ->
+                        RepoCard(repo = repo)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RepoCard(repo: RepoData) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = repo.name,
+                fontFamily = FontFamily(Font(R.font.zain_bold)),
+                fontSize = 20.sp
+            )
+
+            repo.description?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = it,
+                    fontFamily = FontFamily(Font(R.font.zain_regular)),
+                    fontSize = 16.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Language: ${repo.language ?: "N/A"}",
+                fontFamily = FontFamily(Font(R.font.zain_regular)),
+                fontSize = 16.sp
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "URL: ${repo.html_url}",
+                fontFamily = FontFamily(Font(R.font.zain_regular)),
+                fontSize = 16.sp
+            )
         }
     }
 }

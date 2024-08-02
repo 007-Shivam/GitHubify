@@ -118,6 +118,9 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     ) {
+                        val user by viewModel.user.collectAsState()
+                        val repos by viewModel.repos.collectAsState()
+
                         NavHost(navController = navController, startDestination = "Home") {
                             composable("Home") {
                                 Home(viewModel, navController)
@@ -126,7 +129,7 @@ class MainActivity : ComponentActivity() {
                                 Profile(navController)
                             }
                             composable("UserDetails") {
-                                UserDetails(viewModel.user.collectAsState().value, navController, viewModel)
+                                UserDetails(user, repos, navController, viewModel)
                             }
                         }
                     }
