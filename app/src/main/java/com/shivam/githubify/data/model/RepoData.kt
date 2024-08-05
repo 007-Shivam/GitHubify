@@ -1,5 +1,9 @@
 package com.shivam.githubify.data.model
 
+/**
+ * @author 007-Shivam (Shivam Bhosle)
+ */
+
 data class RepoData(
     val allow_forking: Boolean,
     val archive_url: String,
