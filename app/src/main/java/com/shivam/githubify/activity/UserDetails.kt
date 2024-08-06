@@ -46,10 +46,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.shivam.githubify.R
-import com.shivam.githubify.compoenet.RepoCard
+import com.shivam.githubify.component.RepoCard
 import com.shivam.githubify.data.model.RepoData
 import com.shivam.githubify.data.model.UserData
 import com.shivam.githubify.presentation.UserDataViewModel

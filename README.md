@@ -1,10 +1,10 @@
 # GitHubify
 
-### Overview
+## Overview
 
 GitHubify is an Android application built using Jetpack Compose and Kotlin. The app allows users to search for GitHub profiles and view detailed information about users and their repositories. It features a clean, modern UI and leverages the power of Retrofit, Coroutines, and other modern Android development tools.
 
-### Table of Content
+## Table of Content
 - [Features](#features)
 - [Technologies Used](#technologiesused)
 - [Installation](#installation)
@@ -13,14 +13,14 @@ GitHubify is an Android application built using Jetpack Compose and Kotlin. The 
 - [Contributing](#contributing)
 - [License](#license)
 
-### Features
+## Features
 
 - **User Search**: Search for GitHub users by username.
 - **User Details**: View detailed information about a GitHub user including their avatar, name, location, bio, repositories, followers, and following.
 - **Repository List**: Display a list of repositories for a user, including details like description, languages used, stars, and forks.
 - **More features to be added soon**
 
-### Technologies Used
+## Technologies Used
 
 - **Jetpack Compose**: Modern toolkit for building native Android UI.
 - **Kotlin**: Official language for Android development.
@@ -30,7 +30,7 @@ GitHubify is an Android application built using Jetpack Compose and Kotlin. The 
 - **ViewModel**: Designed to store and manage UI-related data in a lifecycle-conscious way.
 - **Material Design 3**: UI components and design system.
 
-### Installation
+## Installation
 
 1. **Clone the repository**:
    ```sh
@@ -52,7 +52,7 @@ GitHubify is an Android application built using Jetpack Compose and Kotlin. The 
 
 How to generate your PERSONAL ACCESS TOKEN: [click here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)
 
-### Usage
+## Usage
 1. **Search for a User**    :
 - Enter a GitHub username in the search bar and press the search button.
 - The app fetches and displays the user's profile information.
@@ -64,7 +64,7 @@ How to generate your PERSONAL ACCESS TOKEN: [click here](https://docs.github.com
 - View a list of repositories for the selected user.
 - Tap on a repository to see more details, including the languages used, stars, and forks
 
-### Future Features
+## Future Features
 - **Search History**: Save and display search history.
 - **User Following & Followers**: View the list of users followed by or following the searched user.
 - **Repository Sorting and Filtering**: Sort and filter repositories by various criteria.
@@ -72,7 +72,7 @@ How to generate your PERSONAL ACCESS TOKEN: [click here](https://docs.github.com
 - **Additional Profile Details**: Show more detailed user information such as organizations, - contributions, etc.
 - **More features will be added soon.**
 
-### Contributing
+## Contributing
 Contributions are welcome! Please follow these steps to contribute:
 
 1. Fork the repository.
@@ -94,7 +94,7 @@ Contributions are welcome! Please follow these steps to contribute:
 
 5. Create a Pull Request.
 
-### License
+## License
 This project is licensed under the [MIT License](https://github.com/007-Shivam/Githubify/blob/main/LICENSE).
 
 ---

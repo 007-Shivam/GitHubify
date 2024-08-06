@@ -49,7 +49,7 @@ class UserDataViewModel(
     fun fetchUser(username: String) {
         viewModelScope.launch {
             _loading.value = true
-            clearUserData() // Clear existing data before fetching new data
+            clearUserData()
             userRepository.getUser(username).collectLatest { result ->
                 _loading.value = false
                 when (result) {
@@ -73,7 +73,7 @@ class UserDataViewModel(
     }
 
     fun fetchRepos(username: String) {
-        if (isReposFetched) return // Do not fetch again if already fetched
+        if (isReposFetched) return
 
         viewModelScope.launch {
             userRepository.getRepos(username).collectLatest { result ->
