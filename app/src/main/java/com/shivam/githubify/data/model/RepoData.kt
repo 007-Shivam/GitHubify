@@ -51,6 +51,7 @@ data class RepoData(
     val keys_url: String,
     val labels_url: String,
     val language: String,
+    var languages: List<String> = emptyList(),
     val languages_url: String,
     val merges_url: String,
     val milestones_url: String,

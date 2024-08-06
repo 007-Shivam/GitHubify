@@ -2,6 +2,10 @@ package com.shivam.githubify.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+/**
+ * @author 007-Shivam (Shivam Bhosle)
+ */
+
 val primaryLight = Color(0xFF445E91)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFD8E2FF)

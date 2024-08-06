@@ -38,9 +38,18 @@ class UserDataViewModel(
     private val _showErrorToastChannel = Channel<Boolean>()
     val showErrorToastChannel = _showErrorToastChannel.receiveAsFlow()
 
+    private var isReposFetched = false
+
+    fun clearUserData() {
+        _user.value = null
+        _repos.value = emptyList()
+        isReposFetched = false
+    }
+
     fun fetchUser(username: String) {
         viewModelScope.launch {
             _loading.value = true
+            clearUserData() // Clear existing data before fetching new data
             userRepository.getUser(username).collectLatest { result ->
                 _loading.value = false
                 when (result) {
@@ -64,6 +73,8 @@ class UserDataViewModel(
     }
 
     fun fetchRepos(username: String) {
+        if (isReposFetched) return // Do not fetch again if already fetched
+
         viewModelScope.launch {
             userRepository.getRepos(username).collectLatest { result ->
                 when (result) {
@@ -74,15 +85,10 @@ class UserDataViewModel(
                     }
                     is Result.Success -> {
                         _repos.value = result.data ?: emptyList()
+                        isReposFetched = true
                     }
                 }
             }
         }
     }
-
-    fun clearUserData() {
-        _user.value = null
-        _repos.value = emptyList()
-    }
 }
-

@@ -4,6 +4,9 @@ import android.util.Log
 import coil.network.HttpException
 import com.shivam.githubify.data.model.RepoData
 import com.shivam.githubify.data.model.UserData
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
@@ -39,18 +42,25 @@ class UserDataRepositoryImpl(
         return flow {
             try {
                 val allRepos = mutableListOf<RepoData>()
-                var page = 1
                 val perPage = 30
+                var page = 1
                 while (true) {
-                    Log.d("UserDataRepository", "Fetching repos for $username, page $page")
                     val repos = api.getRepos(username, page, perPage)
-                    if (repos.isEmpty()) {
-                        break
-                    }
+                    if (repos.isEmpty()) break
                     allRepos.addAll(repos)
                     page++
                 }
-                Log.d("UserDataRepository", "Repos fetched successfully")
+
+                // Fetch languages for each repo concurrently
+                coroutineScope {
+                    allRepos.map { repo ->
+                        async {
+                            val languages = api.getLanguages(repo.languages_url)
+                            repo.languages = languages.keys.toList()
+                        }
+                    }.awaitAll()
+                }
+
                 emit(Result.Success(allRepos))
             } catch (e: IOException) {
                 Log.e("UserDataRepository", "IOException: ${e.message}")
