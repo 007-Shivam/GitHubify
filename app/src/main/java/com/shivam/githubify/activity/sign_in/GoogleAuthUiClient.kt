@@ -12,6 +12,10 @@ import com.shivam.githubify.R
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * @author 007-Shivam (Shivam Bhosle)
+ */
+
 class GoogleAuthUiClient(
     private val context: Context,
     private val oneTapClient: SignInClient

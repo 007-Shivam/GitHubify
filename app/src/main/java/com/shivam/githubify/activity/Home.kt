@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -53,7 +54,6 @@ fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
     val error by viewModel.error.collectAsState()
     val isLoading by viewModel.loading.collectAsState()
     val repos by viewModel.repos.collectAsState()
-
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -86,14 +86,15 @@ fun Searchbar(viewModel: UserDataViewModel, error: String, onSearch: (String) ->
     var text by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    Spacer(modifier = Modifier.height(80.dp))
+    Spacer(modifier = Modifier.height(100.dp))
 
     Text(
         text = "Enter the\nGithub\nUsername",
         fontWeight = FontWeight.Bold,
         fontFamily = FontFamily(Font(R.font.zain_extrabold)),
         fontSize = 60.sp,
-        lineHeight = 70.sp
+        lineHeight = 70.sp,
+        textAlign = TextAlign.Center
     )
 
     Spacer(modifier = Modifier.height(25.dp))

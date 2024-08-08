@@ -307,6 +307,7 @@ fun UserDetails(
                             .padding(10.dp, 0.dp)
                     ) {
                         RepoCard(
+                            navController,
                             repo = repo,
                             isExpanded = index == expandedCardIndex,
                             onCardClick = {

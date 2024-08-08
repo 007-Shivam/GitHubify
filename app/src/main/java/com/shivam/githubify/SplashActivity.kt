@@ -1,6 +1,7 @@
 package com.shivam.githubify
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,8 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.android.gms.auth.api.identity.Identity
+import com.shivam.githubify.activity.sign_in.GoogleAuthUiClient
 import com.shivam.githubify.ui.theme.GitHubifyTheme
 import kotlinx.coroutines.delay
 
@@ -42,6 +46,7 @@ class SplashActivity : ComponentActivity() {
     @Preview
     @Composable
     private fun SplashScreen(){
+        val context = LocalContext.current
         val alpha = remember{
             androidx.compose.animation.core.Animatable(0f)
         }
@@ -51,12 +56,20 @@ class SplashActivity : ComponentActivity() {
                 animationSpec = tween(1500)
             )
             delay(1500)
-            startActivity(
-                Intent(this@SplashActivity, MainActivity::class.java).apply{
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }
+            // Check sign-in status and navigate accordingly
+            val googleAuthUiClient = GoogleAuthUiClient(
+                context = context,
+                oneTapClient = Identity.getSignInClient(context)
             )
-            finish()
+            val isSignedIn = googleAuthUiClient.getSignedInUser() != null
+
+            // Start MainActivity with the appropriate flags and finish SplashActivity
+            val intent = Intent(context, MainActivity::class.java).apply {
+                putExtra("IS_SIGNED_IN", isSignedIn)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            context.startActivity(intent)
+            (context as Activity).finish()
         }
 
         Box (modifier = Modifier

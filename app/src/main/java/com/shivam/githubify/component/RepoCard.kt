@@ -21,12 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +48,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavHostController
+import com.google.android.gms.auth.api.identity.Identity
 import com.shivam.githubify.R
+import com.shivam.githubify.activity.sign_in.GoogleAuthUiClient
 import com.shivam.githubify.data.model.RepoData
 import com.shivam.githubify.data.model.langColor
 import java.time.LocalDateTime
@@ -59,6 +64,7 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RepoCard(
+    navController: NavHostController,
     repo: RepoData,
     isExpanded: Boolean,
     onCardClick: () -> Unit
@@ -66,8 +72,16 @@ fun RepoCard(
     val context = LocalContext.current
     val primaryLanguageColor = repo.languages.firstOrNull()?.let { langColor[it] } ?: Color.Gray
     var isStarred by remember { mutableStateOf(false) }
+    var showSignInDialog by remember { mutableStateOf(false) }
 
-
+    // Check if the user is signed in
+    val googleAuthUiClient = remember {
+        GoogleAuthUiClient(
+            context = context,
+            oneTapClient = Identity.getSignInClient(context)
+        )
+    }
+    val isSignedIn = googleAuthUiClient.getSignedInUser() != null
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
     val outputFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy")
@@ -76,6 +90,30 @@ fun RepoCard(
         dateTime.format(outputFormatter)
     } catch (e: Exception) {
         "Unknown date"
+    }
+
+    // Show the sign-in dialog if necessary
+    if (showSignInDialog) {
+        AlertDialog(
+            onDismissRequest = { showSignInDialog = false },
+            title = { Text("Sign In Required") },
+            text = { Text("You need to sign in to favorite this repository.") },
+            confirmButton = {
+                Button(onClick = {
+                    showSignInDialog = false
+                    navController.navigate("SignInScreen")
+                }) {
+                    Text("Sign In")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showSignInDialog = false
+                }) {
+                    Text("No")
+                }
+            }
+        )
     }
 
     Card(
@@ -134,7 +172,11 @@ fun RepoCard(
                     modifier = Modifier
                         .size(24.dp)
                         .clickable {
-                            isStarred = !isStarred
+                            if (isSignedIn) {
+                                isStarred = !isStarred
+                            } else {
+                                showSignInDialog = true
+                            }
                         }
                         .constrainAs(starIcon) {
                             start.linkTo(guideline)

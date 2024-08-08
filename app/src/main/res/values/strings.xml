@@ -5,5 +5,6 @@
     <string name="web_client_id">303906569172-vhnpbsgjfdfjtlufqaaqmtac589aekg9.apps.googleusercontent.com</string>
     <string name="login_btn">LogIn with Google</string>
 
+    <string name="login_des">Discover GitHub profiles with ease using GitHubify! Seamlessly explore users and their repositories with a sleek, modern interface. Powered by the latest Android tech, GitHubify brings the world of code to your fingertips.\nStart your journey now!</string>
 
 </resources>

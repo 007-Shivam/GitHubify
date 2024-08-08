@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -24,6 +26,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -82,6 +85,9 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val isSignedIn = intent.getBooleanExtra("IS_SIGNED_IN", false)
+
         setContent {
             GitHubifyTheme {
                 val navController = rememberNavController()
@@ -105,6 +111,10 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(0)
                 }
 
+                var showSignInDialog by rememberSaveable {
+                    mutableStateOf(false)
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -117,14 +127,17 @@ class MainActivity : ComponentActivity() {
                                         NavigationBarItem(
                                             selected = selectedItemIndex == index,
                                             onClick = {
-                                                selectedItemIndex = index
-                                                navController.navigate(item.title) {
-                                                    // Ensure that the back stack does not have duplicate entries
-                                                    popUpTo(navController.graph.startDestinationId) {
-                                                        saveState = true
+                                                if (item.title == "Profile" && googleAuthUiClient.getSignedInUser() == null) {
+                                                    showSignInDialog = true
+                                                } else {
+                                                    selectedItemIndex = index
+                                                    navController.navigate(item.title) {
+                                                        popUpTo(navController.graph.startDestinationId) {
+                                                            saveState = true
+                                                        }
+                                                        launchSingleTop = true
+                                                        restoreState = true
                                                     }
-                                                    launchSingleTop = true
-                                                    restoreState = true
                                                 }
                                             },
                                             label = {
@@ -150,7 +163,34 @@ class MainActivity : ComponentActivity() {
                         val signInViewModel: SignInViewModel by viewModels()
                         val state by signInViewModel.state.collectAsStateWithLifecycle()
 
-                        NavHost(navController = navController, startDestination = "SignInScreen") {
+                        // Show the sign-in dialog if necessary
+                        if (showSignInDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showSignInDialog = false },
+                                title = { Text("Sign In Required") },
+                                text = { Text("Do you want to sign in to access your profile?") },
+                                confirmButton = {
+                                    Button(onClick = {
+                                        showSignInDialog = false
+                                        navController.navigate("SignInScreen")
+                                    }) {
+                                        Text("Sign In")
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = {
+                                        showSignInDialog = false
+                                    }) {
+                                        Text("No")
+                                    }
+                                }
+                            )
+                        }
+
+                        NavHost(
+                            navController = navController,
+                            startDestination = if (isSignedIn) "Home" else "SignInScreen"
+                        ) {
                             composable("Home") {
                                 Home(viewModel, navController)
                             }
@@ -166,7 +206,12 @@ class MainActivity : ComponentActivity() {
                                                 Toast.LENGTH_LONG
                                             ).show()
 
-                                            navController.popBackStack()
+                                            selectedItemIndex = 0
+                                            navController.popBackStack(navController.graph.startDestinationId, false)
+                                            navController.navigate("SignInScreen") {
+                                                popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                                launchSingleTop = true
+                                            }
                                         }
                                     }
                                 )
