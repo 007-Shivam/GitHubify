@@ -1,5 +1,7 @@
 package com.shivam.githubify.activity
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +46,7 @@ import com.shivam.githubify.presentation.UserDataViewModel
  * @author 007-Shivam (Shivam Bhosle)
  */
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
     val user by viewModel.user.collectAsState()
