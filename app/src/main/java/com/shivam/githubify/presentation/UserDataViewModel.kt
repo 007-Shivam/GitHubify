@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.shivam.githubify.data.UserDataRepository
 import com.shivam.githubify.data.model.UserData
 import com.shivam.githubify.data.Result
+import com.shivam.githubify.data.model.FollowingFollowersData
 import com.shivam.githubify.data.model.RepoData
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +38,13 @@ class UserDataViewModel(
 
     private val _showErrorToastChannel = Channel<Boolean>()
     val showErrorToastChannel = _showErrorToastChannel.receiveAsFlow()
+
+    private val _followers = MutableStateFlow<Result<List<FollowingFollowersData>>>(Result.Success(emptyList()))
+    val followers: StateFlow<Result<List<FollowingFollowersData>>> = _followers
+
+    private val _following = MutableStateFlow<Result<List<FollowingFollowersData>>>(Result.Success(emptyList()))
+    val following: StateFlow<Result<List<FollowingFollowersData>>> = _following
+
 
     private var isReposFetched = false
 
@@ -88,6 +96,22 @@ class UserDataViewModel(
                         isReposFetched = true
                     }
                 }
+            }
+        }
+    }
+
+    fun fetchFollowers(username: String) {
+        viewModelScope.launch {
+            userRepository.getFollowers(username).collect { result ->
+                _followers.value = result
+            }
+        }
+    }
+
+    fun fetchFollowing(username: String) {
+        viewModelScope.launch {
+            userRepository.getFollowing(username).collect { result ->
+                _following.value = result
             }
         }
     }

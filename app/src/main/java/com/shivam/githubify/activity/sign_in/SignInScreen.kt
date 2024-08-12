@@ -57,11 +57,11 @@ fun SignInScreen(
     onSignInClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val logoSize = remember { Animatable(380f) } // Start with a larger size
+    val logoSize = remember { Animatable(360f) }
 
     LaunchedEffect(Unit) {
         logoSize.animateTo(
-            targetValue = 250f, // Target size
+            targetValue = 200f,
             animationSpec = tween(
                 durationMillis = 800,
                 easing = FastOutSlowInEasing

@@ -43,6 +43,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
+import com.shivam.githubify.activity.FollowersFollowingScreen
 import com.shivam.githubify.activity.Home
 import com.shivam.githubify.activity.Profile
 import com.shivam.githubify.activity.UserDetails
@@ -217,7 +218,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable("UserDetails") {
-                                UserDetails(user, repos, navController, viewModel)
+                                user?.let { UserDetails(it, repos, navController, viewModel) }
                             }
 
                             composable("SignInScreen") {
@@ -267,6 +268,25 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     }
+                                )
+                            }
+
+                            composable("followersScreen") {
+                                FollowersFollowingScreen(
+                                    title = "Followers",
+                                    users = viewModel.followers.collectAsState().value.data ?: emptyList(),
+                                    navController = navController,
+                                    onBackClick = { navController.navigateUp() },
+                                    viewModel
+                                )
+                            }
+                            composable("followingScreen") {
+                                FollowersFollowingScreen(
+                                    title = "Following",
+                                    users = viewModel.following.collectAsState().value.data ?: emptyList(),
+                                    navController = navController,
+                                    onBackClick = { navController.navigateUp() },
+                                    viewModel
                                 )
                             }
                         }

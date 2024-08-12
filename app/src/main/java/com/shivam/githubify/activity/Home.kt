@@ -1,6 +1,7 @@
 package com.shivam.githubify.activity
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
@@ -39,9 +41,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.android.gms.auth.api.identity.Identity
 import com.shivam.githubify.LoadingAnimation
 import com.shivam.githubify.R
+import com.shivam.githubify.activity.sign_in.GoogleAuthUiClient
 import com.shivam.githubify.presentation.UserDataViewModel
+import kotlin.system.exitProcess
 
 /**
  * @author 007-Shivam (Shivam Bhosle)
@@ -50,10 +55,30 @@ import com.shivam.githubify.presentation.UserDataViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
+    val context = LocalContext.current
+
     val user by viewModel.user.collectAsState()
     val error by viewModel.error.collectAsState()
     val isLoading by viewModel.loading.collectAsState()
     val repos by viewModel.repos.collectAsState()
+    // Check if the user is signed in
+    val googleAuthUiClient = remember {
+        GoogleAuthUiClient(
+            context = context,
+            oneTapClient = Identity.getSignInClient(context)
+        )
+    }
+    val isSignedIn = googleAuthUiClient.getSignedInUser() != null
+
+    BackHandler {
+        viewModel.clearUserData()
+
+        if (isSignedIn) {
+            exitProcess(0)
+        } else {
+            navController.navigate("SignInScreen")
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -65,11 +65,14 @@ How to generate your PERSONAL ACCESS TOKEN: [click here](https://docs.github.com
 - Tap on a repository to see more details, including the languages used, stars, and forks
 
 ## Future Features
-- **Search History**: Save and display search history.
+- **Sign in with Google Auth**: Implement authentication using Google Sign-In via Firebase.
+- **Storing Starred Repositories**: Save users' starred repositories in Firestore.
+- **User Search History**: Store and display search history in Firestore, with an option to clear the history.
+- **Caching Search Results**: Cache search results locally until the app is relaunched, improving the speed of subsequent searches.
 - **User Following & Followers**: View the list of users followed by or following the searched user.
 - **Repository Sorting and Filtering**: Sort and filter repositories by various criteria.
 - **Dark Mode**: Support for dark theme.
-- **Additional Profile Details**: Show more detailed user information such as organizations, - contributions, etc.
+- **Responsive Layout**: Ensure the app layout adapts smoothly across different screen sizes and orientations.
 - **More features will be added soon.**
 
 ## Contributing

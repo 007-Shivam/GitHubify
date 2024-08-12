@@ -1,5 +1,6 @@
 package com.shivam.githubify.data
 
+import com.shivam.githubify.data.model.FollowingFollowersData
 import com.shivam.githubify.data.model.RepoData
 import com.shivam.githubify.data.model.UserData
 import retrofit2.http.GET
@@ -28,6 +29,16 @@ interface Api {
     suspend fun getLanguages(
         @Url languagesUrl: String
     ): Map<String, Int>
+
+    @GET("users/{username}/followers")
+    suspend fun getFollowers(
+        @Path("username") username: String
+    ): List<FollowingFollowersData>
+
+    @GET("users/{username}/following")
+    suspend fun getFollowing(
+        @Path("username") username: String
+    ): List<FollowingFollowersData>
 
 
     companion object {
