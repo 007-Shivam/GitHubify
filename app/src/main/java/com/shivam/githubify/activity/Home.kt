@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,7 +58,7 @@ import kotlin.system.exitProcess
 fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
     val context = LocalContext.current
 
-    val user by viewModel.user.collectAsState()
+    val user by viewModel.currentUser.collectAsState()
     val error by viewModel.error.collectAsState()
     val isLoading by viewModel.loading.collectAsState()
     val repos by viewModel.repos.collectAsState()
@@ -97,10 +98,13 @@ fun Home(viewModel: UserDataViewModel, navController: NavHostController) {
         } else {
             if (user == null) {
                 Searchbar(viewModel, error) { username ->
+                    viewModel.pushUser(username)
                     viewModel.fetchUser(username)
                 }
             } else {
-                UserDetails(user, repos, navController, viewModel)
+                LaunchedEffect(user) {
+                    navController.navigate("UserDetails")
+                }
             }
         }
     }

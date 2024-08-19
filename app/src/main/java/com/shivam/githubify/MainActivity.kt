@@ -159,7 +159,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     ) {
-                        val user by viewModel.user.collectAsState()
+                        val user by viewModel.currentUser.collectAsState()
                         val repos by viewModel.repos.collectAsState()
                         val signInViewModel: SignInViewModel by viewModels()
                         val state by signInViewModel.state.collectAsStateWithLifecycle()

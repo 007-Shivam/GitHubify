@@ -74,10 +74,10 @@ fun UserDetails(
             viewModel.fetchRepos(user.login)
         }
 
-        BackHandler {
-            viewModel.clearUserData()
-            navController.navigateUp()
-        }
+//        BackHandler {
+//            viewModel.clearUserData()
+//            navController.navigateUp()
+//        }
 
         Column(modifier = Modifier.fillMaxSize()) {
             // Fixed header for Image and Name
@@ -93,8 +93,16 @@ fun UserDetails(
                     horizontalArrangement = Arrangement.Start
                 ) {
                     TextButton(onClick = {
-                        viewModel.clearUserData()
-                        navController.navigateUp()
+                        val previousRoute = navController.previousBackStackEntry?.destination?.route
+                        val hasMoreUsers = viewModel.popUser()
+
+                        if (previousRoute == "followersScreen" || previousRoute == "followingScreen") {
+                            // Skip the current user's followers/following list and pop up to the previous user
+                            navController.popBackStack("UserDetails", inclusive = true)
+                        } else if (!hasMoreUsers) {
+                            viewModel.clearUserData()
+                            navController.navigate("Home") // Navigate back to Home
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
@@ -130,7 +138,7 @@ fun UserDetails(
                         )
                     },
                     modifier = Modifier
-                        .size(150.dp)
+                        .size(128.dp)
                         .border(
                             BorderStroke(4.dp, MaterialTheme.colorScheme.inversePrimary),
                             CircleShape
@@ -144,7 +152,7 @@ fun UserDetails(
                         .padding(5.dp)
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 if (!user.name.isNullOrEmpty()) {
                     Text(
@@ -154,6 +162,13 @@ fun UserDetails(
                         fontSize = 30.sp
                     )
                 }
+
+                Text(
+                    text = user.login,
+                    fontFamily = FontFamily(Font(R.font.zain_light)),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp
+                )
             }
 
             // Scrollable content
@@ -166,7 +181,6 @@ fun UserDetails(
                     // Scrollable content for location and bio
                     Column(
                         modifier = Modifier
-                            .padding(10.dp)
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -195,7 +209,7 @@ fun UserDetails(
                         }
 
                         if (!user.bio.isNullOrEmpty()) {
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
                                 text = user.bio,
@@ -302,7 +316,7 @@ fun UserDetails(
                             text = "Repositories",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),
+                                .padding(4.dp),
                             fontFamily = FontFamily(Font(R.font.zain_bold)),
                             fontSize = 24.sp,
                             textAlign = TextAlign.Center

@@ -7,6 +7,7 @@ import com.shivam.githubify.data.model.UserData
 import com.shivam.githubify.data.Result
 import com.shivam.githubify.data.model.FollowingFollowersData
 import com.shivam.githubify.data.model.RepoData
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,8 +25,10 @@ class UserDataViewModel(
     private val userRepository: UserDataRepository
 ) : ViewModel() {
 
-    private val _user = MutableStateFlow<UserData?>(null)
-    val user: StateFlow<UserData?> = _user.asStateFlow()
+    private val userStack = mutableListOf<String>() // Stack to hold user IDs
+
+    private val _currentUser = MutableStateFlow<UserData?>(null)
+    val currentUser: StateFlow<UserData?> = _currentUser.asStateFlow()
 
     private val _repos = MutableStateFlow<List<RepoData>>(emptyList())
     val repos: StateFlow<List<RepoData>> = _repos.asStateFlow()
@@ -47,31 +50,42 @@ class UserDataViewModel(
 
 
     private var isReposFetched = false
+    private var fetchReposJob: Job? = null
+
 
     fun clearUserData() {
-        _user.value = null
+        _currentUser.value = null
         _repos.value = emptyList()
-        isReposFetched = false
+        fetchReposJob?.cancel() // Cancel any ongoing repository fetch job
+    }
+
+    private fun clearRepos() {
+        _repos.value = emptyList()
+    }
+
+    fun pushUser(username: String) {
+        userStack.add(username)
+        clearUserData() // Clear repos when a new user is pushed
+        fetchUser(username)
     }
 
     fun fetchUser(username: String) {
         viewModelScope.launch {
             _loading.value = true
-            clearUserData()
             userRepository.getUser(username).collectLatest { result ->
                 _loading.value = false
                 when (result) {
                     is Result.Error -> {
-                        _user.value = null
+                        _currentUser.value = null
                         _error.value = "User not found."
                         _showErrorToastChannel.send(true)
                     }
                     is Result.Success -> {
                         result.data?.let { user ->
-                            _user.value = user
+                            _currentUser.value = user
                             _error.value = ""
                         } ?: run {
-                            _user.value = null
+                            _currentUser.value = null
                             _error.value = "User not found."
                         }
                     }
@@ -80,10 +94,22 @@ class UserDataViewModel(
         }
     }
 
-    fun fetchRepos(username: String) {
-        if (isReposFetched) return
+    fun popUser(): Boolean {
+        if (userStack.isNotEmpty()) {
+            userStack.removeLast()
+            if (userStack.isNotEmpty()) {
+                fetchUser(userStack.last())
+                return true
+            }
+        }
+        return false
+    }
 
-        viewModelScope.launch {
+
+    fun fetchRepos(username: String) {
+        fetchReposJob?.cancel() // Cancel any ongoing repository fetch job
+
+        fetchReposJob = viewModelScope.launch {
             userRepository.getRepos(username).collectLatest { result ->
                 when (result) {
                     is Result.Error -> {
@@ -93,7 +119,6 @@ class UserDataViewModel(
                     }
                     is Result.Success -> {
                         _repos.value = result.data ?: emptyList()
-                        isReposFetched = true
                     }
                 }
             }
